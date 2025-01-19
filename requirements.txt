@@ -1,0 +1,7 @@
+llama-parse
+langchain
+chromadb
+langchain-groq
+python-dotenv
+langchain_community
+streamlit
