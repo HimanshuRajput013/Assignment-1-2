@@ -11,7 +11,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_groq import ChatGroq
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -25,7 +24,7 @@ nest_asyncio.apply()
 
 from llama_parse import LlamaParse
 
-
+SharedSystemClient.clear_system_cache()
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -53,7 +52,7 @@ api_key=st.text_input("Enter your Groq API key:",type="password")
 
 ## Check if groq api key is provided
 if api_key:
-    llm=ChatGroq(groq_api_key=api_key,model_name="llama-3.1-8b-instant")
+    llm=ChatGroq(groq_api_key=api_key,model_name="Gemma2-9b-It")
 
     ## chat interface
 
@@ -81,7 +80,7 @@ if api_key:
                 f.writelines([doc.text + "\n\n" for doc in docs])  # Save directly
             
         
-        SharedSystemClient.clear_system_cache()
+        
 
     # Load the content of the text file
         input_file_name = 'extracted_output.txt'
@@ -92,11 +91,11 @@ if api_key:
             pdf_text = input_file.read()
 
     # Split and create embeddings for the documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=500)
         
         splits = text_splitter.create_documents([pdf_text])
         vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-        retriever = vectorstore.as_retriever()    
+        retriever = vectorstore.as_retriever()
 
         contextualize_q_system_prompt=(
             "Given a chat history and the latest user question"
@@ -163,13 +162,3 @@ if api_key:
             st.write("Chat History:", session_history.messages)
 else:
     st.warning("Please enter the GRoq API Key")
-
-
-
-
-
-
-
-
-
-
